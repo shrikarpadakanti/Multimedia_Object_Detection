@@ -16,13 +16,6 @@ from io import BytesIO
 from typing import Optional, Tuple, Union
 
 def load_yolov8_model(model_name: str = 'yolov8s.pt') -> Optional[YOLO]:
-    """
-    Load a YOLOv8 model.
-    Args:
-        model_name (str): Name of the model to load.
-    Returns:
-        Optional[YOLO]: Loaded YOLO model or None if loading fails.
-    """
     try:
         return YOLO(model_name)
     except Exception as e:
@@ -30,14 +23,6 @@ def load_yolov8_model(model_name: str = 'yolov8s.pt') -> Optional[YOLO]:
         return None
 
 def detect_objects(image: np.ndarray, model: YOLO) -> Optional[np.ndarray]:
-    """
-    Perform object detection on an image.
-    Args:
-        image (np.ndarray): Input image.
-        model (YOLO): Loaded YOLO model.
-    Returns:
-        Optional[np.ndarray]: Processed image with bounding boxes or None if detection fails.
-    """
     try:
         results = model(image)
         
@@ -56,15 +41,6 @@ def detect_objects(image: np.ndarray, model: YOLO) -> Optional[np.ndarray]:
         return None
 
 def process_image_with_yolov8(model_name: str, image: Optional[Image.Image] = None, url: Optional[str] = None) -> Optional[np.ndarray]:
-    """
-    Process an image with YOLOv8 model.
-    Args:
-        model_name (str): Name of the YOLO model to use.
-        image (Optional[Image.Image]): Input image.
-        url (Optional[str]): URL of the image to process.
-    Returns:
-        Optional[np.ndarray]: Processed image or None if processing fails.
-    """
     model = load_yolov8_model(model_name)
     if model is None:
         return None
@@ -84,12 +60,6 @@ def process_image_with_yolov8(model_name: str, image: Optional[Image.Image] = No
         return None
 
 def download_image(url: str, save_path: str) -> None:
-    """
-    Download an image from a URL and save it to a specified path.
-    Args:
-        url (str): URL of the image to download.
-        save_path (str): Path to save the downloaded image.
-    """
     try:
         response = requests.get(url)
         response.raise_for_status()
@@ -100,12 +70,6 @@ def download_image(url: str, save_path: str) -> None:
         print(f"Failed to retrieve image. Error: {e}")
 
 def download_base64_image(base64_data: str, save_path: str) -> None:
-    """
-    Decode a base64 image and save it to a specified path.
-    Args:
-        base64_data (str): Base64 encoded image data.
-        save_path (str): Path to save the decoded image.
-    """
     try:
         header, encoded = base64_data.split(',', 1)
         data = base64.b64decode(encoded)
@@ -116,12 +80,6 @@ def download_base64_image(base64_data: str, save_path: str) -> None:
         print(f"Failed to decode base64 image. Error: {e}")
 
 def download_video(url: str, save_path: str) -> None:
-    """
-    Download a video from a URL and save it to a specified path.
-    Args:
-        url (str): URL of the video to download.
-        save_path (str): Path to save the downloaded video.
-    """
     try:
         yt = YouTube(url)
         stream = yt.streams.get_highest_resolution()
@@ -131,12 +89,6 @@ def download_video(url: str, save_path: str) -> None:
         print(f"Failed to retrieve video. Error: {e}")
 
 def download_instagram_post(url: str, save_path: str) -> None:
-    """
-    Download an Instagram post (image or video) and save it to a specified path.
-    Args:
-        url (str): URL of the Instagram post.
-        save_path (str): Path to save the downloaded content.
-    """
     loader = instaloader.Instaloader()
     post = instaloader.Post.from_shortcode(loader.context, url.split("/")[-2])
     if post.is_video:
@@ -149,13 +101,6 @@ def download_instagram_post(url: str, save_path: str) -> None:
         print(f"Images saved to {save_path}")
 
 def download_youtube_video(youtube_url: str) -> Optional[str]:
-    """
-    Download a YouTube video and return the path to the downloaded file.
-    Args:
-        youtube_url (str): URL of the YouTube video.
-    Returns:
-        Optional[str]: Path to the downloaded video file or None if download fails.
-    """
     try:
         yt = YouTube(youtube_url)
         stream = yt.streams.filter(file_extension='mp4', res="720p").first()
@@ -169,15 +114,6 @@ def download_youtube_video(youtube_url: str) -> Optional[str]:
         return None
 
 def process_video(input_video_path: str, output_video_path: str, model: YOLO) -> Optional[str]:
-    """
-    Process a video file with object detection and save the result.
-    Args:
-        input_video_path (str): Path to the input video file.
-        output_video_path (str): Path to save the processed video.
-        model (YOLO): Loaded YOLO model.
-    Returns:
-        Optional[str]: Path to the processed video or None if processing fails.
-    """
     cap = cv2.VideoCapture(input_video_path)
     if not cap.isOpened():
         print(f"Error: Cannot open video file {input_video_path}")
@@ -204,16 +140,6 @@ def process_video(input_video_path: str, output_video_path: str, model: YOLO) ->
     return output_video_path
 
 def handle_input_selection(model_name: str, choice: str, image: Optional[Image.Image], url: Optional[str]) -> Tuple[Optional[np.ndarray], Optional[str]]:
-    """
-    Handle input selection and process the image accordingly.
-    Args:
-        model_name (str): Name of the YOLO model to use.
-        choice (str): Input method choice ('Upload' or 'URL').
-        image (Optional[Image.Image]): Uploaded image.
-        url (Optional[str]): Image URL.
-    Returns:
-        Tuple[Optional[np.ndarray], Optional[str]]: Processed image and error message (if any).
-    """
     if choice == "Upload" and image is not None:
         return process_image_with_yolov8(model_name, image=image), None
     elif choice == "URL" and url:
@@ -222,15 +148,6 @@ def handle_input_selection(model_name: str, choice: str, image: Optional[Image.I
         return None, "Invalid input. Please provide an image or URL."
 
 def process_input(model_name: str, local_video: Optional[str] = None, video_url: Optional[str] = None) -> Union[str, Optional[str]]:
-    """
-    Process input video with YOLOv8 model.
-    Args:
-        model_name (str): Name of the YOLO model to use.
-        local_video (Optional[str]): Path to local video file.
-        video_url (Optional[str]): YouTube video URL.
-    Returns:
-        Union[str, Optional[str]]: Path to processed video or error message.
-    """
     model = load_yolov8_model(model_name)
     if model is None:
         return "Failed to load YOLO model."
@@ -250,7 +167,6 @@ def process_input(model_name: str, local_video: Optional[str] = None, video_url:
     result = process_video(input_path, output_path, model)
     return result if result else "Error processing video."
 
-# Create Gradio Interface
 with gr.Blocks() as demo:
     gr.Markdown("## Multimedia Object Detection Using YOLO")
     
