@@ -1,0 +1,8 @@
+gradio
+opencv-python
+numpy<2
+pillow
+pytube
+requests
+ultralytics
+instaloader
