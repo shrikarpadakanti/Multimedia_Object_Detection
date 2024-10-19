@@ -1,6 +1,6 @@
 gradio
 opencv-python
-numpy<2
+numpy
 pillow
 pytube
 requests
